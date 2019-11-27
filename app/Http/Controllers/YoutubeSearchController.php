@@ -41,7 +41,7 @@ class YoutubeSearchController extends Controller
         if (isset($data['part'])) {
             return new JsonResponse($this->searchService
                 ->setPart($data['part'])
-                ->search($data['query'])
+                ->search($data['query'])['items']
             );
         }
 

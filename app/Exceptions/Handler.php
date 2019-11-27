@@ -5,6 +5,9 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -28,8 +31,9 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $exception
+     * @param Exception $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
@@ -39,12 +43,20 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
-     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     * @param  Request  $request
+     * @param Exception $exception
+     * @return Response|JsonResponse
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof ValidationException) {
+            $error_message = $exception->validator->messages()->first();
+            return new JsonResponse(['status' => 'error', 'message' => $error_message], 400);
+        } else if ($exception instanceof \Google_Service_Exception) {
+            $error_data = json_decode($exception->getMessage(), true);
+            return new JsonResponse($error_data, 400);
+        }
+
         return parent::render($request, $exception);
     }
 }
