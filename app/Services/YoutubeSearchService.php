@@ -31,7 +31,9 @@ class YoutubeSearchService
     {
         $queryParams = ['q' => $query];
 
-        return $this->youTube->search->listSearch($this->part, $queryParams);
+        $youtube_response = $this->youTube->search->listSearch($this->part, $queryParams);
+
+        return $youtube_response['items'];
     }
 
     /**
