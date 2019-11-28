@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  webapp:
+      container_name: webapp
+      build: ./docker
+      volumes:
+        - './:/var/www/html'
+      networks:
+        - website
+
+  nginx:
+      image: nginx
+      container_name: nginx-server
+      ports:
+        - '8000:8000'
+      volumes:
+        - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+      depends_on:
+        - webapp
+      networks:
+        - website
+
+networks:
+  website:
