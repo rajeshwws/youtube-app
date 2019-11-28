@@ -1,24 +1,112 @@
-# Lumen PHP Framework
+## Youtube API App
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+This is a simplified prototype app that provide a simple interface to search Youtube via their public API. 
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+The Project is built on the [Laravel-Lumen](https://lumen.laravel.com).  
 
-## Official Documentation
+## Installation
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+Development environment requirements :
+- [Docker](https://www.docker.com) >= 17.06 CE
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-## Contributing
+Setting up your development environment on your local machine :
+```bash
+$ git clone https://github.com/rajeshwws/youtube-app.git
+$ cd youtube-app
+$ cp .env.example .env
+$ docker-compose run --rm --no-deps webapp composer install
+$ docker-compose up -d
+```
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Now you can access the application via [http://localhost:8000](http://localhost:8000).
 
-## Security Vulnerabilities
+**There is no need to run ```php artisan serve```. PHP is already running in a dedicated container.**
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+## Useful commands
 
-## License
+Running tests :
+```bash
+$ docker-compose run --rm --no-deps webapp ./vendor/bin/phpunit --cache-result --order-by=defects --stop-on-defect --debug --coverage-text
+```
 
-The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Accessing the API
+
+Clients can access to the REST API. API requests does not require authentication.
+
+The table below shows the available endpoints.
+
+```
++------+----------------+---------------------+----------------------+
+| Verb | Path           | Role                | Action               |
++------+----------------+---------------------+----------------------+
+| GET  | /              | Frontend Client     | Framework info       |
+| POST | /search        | Search API endpoint | Search Youtube API   |
++------+----------------+---------------------+----------------------+
+```
+
+## Making the Search API Call
+if you don't want to use the attached simple frontend, you can also make `POST` request to the search endpoint directly.
+ - Using an API client such as Postman, make a Post request to `http://localhost:8000/search` with the sample data below
+ 
+ ```json
+{
+	"query": "youtube"
+}
+```
+ - You should get a similar response to this sample response
+ 
+ ```json
+[
+    {
+        "etag": "\"j6xRRd8dTPVVptg711_CSPADRfg/3yJLEwR3ILAP2KmccKg65JJgApg\"",
+        "kind": "youtube#searchResult",
+        "id": {
+            "channelId": null,
+            "kind": "youtube#video",
+            "playlistId": null,
+            "videoId": "FzG4uDgje3M"
+        }
+    },
+    {
+        "etag": "\"j6xRRd8dTPVVptg711_CSPADRfg/bwazJ9XxILZb0BiG6XxtE6NZCIg\"",
+        "kind": "youtube#searchResult",
+        "id": {
+            "channelId": "UCbCmjCuTUZos6Inko4u57UQ",
+            "kind": "youtube#channel",
+            "playlistId": null,
+            "videoId": null
+        }
+    },
+    {
+        "etag": "\"j6xRRd8dTPVVptg711_CSPADRfg/RDYm_qT4eypDXoNLCv0drSp5a24\"",
+        "kind": "youtube#searchResult",
+        "id": {
+            "channelId": "UCBR8-60-B28hp2BmDPdntcQ",
+            "kind": "youtube#channel",
+            "playlistId": null,
+            "videoId": null
+        }
+    },
+    {
+        "etag": "\"j6xRRd8dTPVVptg711_CSPADRfg/bvTfmziPXHIQbE9YutCX2aybrRk\"",
+        "kind": "youtube#searchResult",
+        "id": {
+            "channelId": null,
+            "kind": "youtube#playlist",
+            "playlistId": "PLoaTLsTsV3hOUq5qk5SiWpwRT57WWqq6X",
+            "videoId": null
+        }
+    },
+    {
+        "etag": "\"j6xRRd8dTPVVptg711_CSPADRfg/--aUNzPi2DKs2nxvOs_XcIQyRvg\"",
+        "kind": "youtube#searchResult",
+        "id": {
+            "channelId": null,
+            "kind": "youtube#video",
+            "playlistId": null,
+            "videoId": "DYlesHOaPkY"
+        }
+    }
+]
+```
